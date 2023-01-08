@@ -1,46 +1,19 @@
 package ru.yandex.practicum.taskTracker.model;
 
-import ru.yandex.practicum.taskTracker.service.Status;
 import java.util.ArrayList;
 
 public class Epic extends Task {
-    private ArrayList<Subtask> subtasks;
+    private ArrayList<Integer> subtasksID;
 
     public Epic(String name, String description) {
         super(name, description);
-        updateStatus();
+        super.setId();
+        subtasksID = new ArrayList<>();
+        setStatus(Status.NEW);
     }
 
-    void updateStatus() {
-        Status statusOfEpic = Status.NEW;
-        boolean isInProgress = false;
-        boolean isDone = false;
-        if (subtasks != null) {
-            for (Subtask subtask: subtasks) {
-                if (subtask.getStatus() == Status.IN_PROGRESS) {
-                    isInProgress = true;
-                }
-                isDone = subtask.getStatus() == Status.DONE;
-            }
-        }
-        if (isDone) {
-            statusOfEpic = Status.DONE;
-        } else if (isInProgress) {
-            statusOfEpic = Status.IN_PROGRESS;
-        }
-            setStatus(statusOfEpic);
-    }
-
-    public ArrayList<Subtask> getSubtasks() {
-        return subtasks;
-    }
-
-    void addSubtask(Subtask subtask) {
-        if (subtasks == null) {
-            subtasks = new ArrayList<>();
-        }
-        subtasks.add(subtask);
-        updateStatus();
+    public ArrayList<Integer> getSubtasksID() {
+        return subtasksID;
     }
 
     @Override
@@ -49,18 +22,26 @@ public class Epic extends Task {
                 "name='" + getName() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", id=" + getId() +
-                ", subtasks= [" + getListOfNamesOfSubtasks() +
+                ", subtasks= [" + getListOfIdOfSubtasks() +
                 "], status=" + getStatus() +
                 '}';
     }
 
-    private String getListOfNamesOfSubtasks() {
+    private String getListOfIdOfSubtasks() {
         String namesOfSubtasks = "";
-        if (subtasks != null) {
-            for(Subtask subtask: subtasks) {
-                namesOfSubtasks += subtask.getName() + "|";
+        if (subtasksID != null) {
+            for(Integer subtaskID: subtasksID) {
+                namesOfSubtasks += subtaskID + "|";
             }
         }
         return namesOfSubtasks;
+    }
+
+    public void deleteSubtaskID(Integer id) {
+        subtasksID.remove(id);
+    }
+
+    public void addSubtaskID(Integer id) {
+        subtasksID.add(id);
     }
 }

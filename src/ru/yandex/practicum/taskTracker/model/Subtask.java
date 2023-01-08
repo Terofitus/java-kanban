@@ -1,24 +1,17 @@
 package ru.yandex.practicum.taskTracker.model;
 
-import ru.yandex.practicum.taskTracker.service.Status;
-
 public class Subtask extends Task {
-    private final Epic epic;
+    private final int epicID;
 
-    public Epic getEpic() {
-        return epic;
+    public int getEpicID() {
+        return epicID;
     }
 
-    public void setStatus(Status status) {
-        super.setStatus(status);
-        epic.updateStatus();
-    }
-
-    public Subtask(String name, String description, Epic epic, Status status) {
+    public Subtask(String name, String description,Epic epic, Status status) {
         super(name, description);
-        super.setStatus(status);
-        this.epic = epic;
-        epic.addSubtask(this);
+        super.setId();
+        epicID = epic.getId();
+        setStatus(status);
     }
 
     @Override
@@ -28,7 +21,7 @@ public class Subtask extends Task {
                 ", description='" + getDescription() + '\'' +
                 ", id=" + getId() +
                 ", status=" + getStatus() +
-                ", epic=" + epic.getName() +
+                ", epicID=" + getEpicID() +
                 '}';
     }
 }
