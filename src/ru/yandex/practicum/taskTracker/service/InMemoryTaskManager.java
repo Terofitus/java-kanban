@@ -2,15 +2,19 @@ package ru.yandex.practicum.taskTracker.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import ru.yandex.practicum.taskTracker.model.*;
 
-public class TaskTrackerManager {
-    private HashMap<Integer, Task> tasksById;
+class InMemoryTaskManager implements TaskManager {
+    private final HashMap<Integer, Task> tasksById;
+    HistoryManager historyManager;
 
-    public TaskTrackerManager() {
+    public InMemoryTaskManager() {
         tasksById = new HashMap<>();
+        historyManager = Managers.getDefaultHistory();
     }
 
+    @Override
     public ArrayList getListOfTasks(TypeOfTask type) {
         ArrayList<Task> tasksByType = new ArrayList<>();
         switch (type) {
@@ -46,6 +50,7 @@ public class TaskTrackerManager {
         return tasksByType;
     }
 
+    @Override
     public void createNewTask(SimpleTask task) {
         if (!tasksById.containsValue(task)) {
             tasksById.put(task.getId(), task);
@@ -54,6 +59,7 @@ public class TaskTrackerManager {
         }
     }
 
+    @Override
     public void createNewTask(Epic epic) {
         if (!tasksById.containsValue(epic)) {
             tasksById.put(epic.getId(), epic);
@@ -69,6 +75,7 @@ public class TaskTrackerManager {
         }
     }
 
+    @Override
     public void createNewTask(Subtask task) {
         if (!tasksById.containsValue(task)) {
             tasksById.put(task.getId(), task);
@@ -82,14 +89,18 @@ public class TaskTrackerManager {
         }
     }
 
+    @Override
     public void deleteAllTasks() {
         tasksById.clear();
     }
 
+    @Override
     public Task getTaskById(Integer id) {
+        historyManager.add(tasksById.get(id));
         return tasksById.get(id);
     }
 
+    @Override
     public void deleteTaskById(int id) {
         Task task = tasksById.get(id);
         if (task.getClass() == Epic.class) {
@@ -102,19 +113,14 @@ public class TaskTrackerManager {
         tasksById.remove(task.getId());
     }
 
-    public void printTasksAllTypeByType() {
-        printTasksByType(TypeOfTask.TASK);
-        printTasksByType(TypeOfTask.SIMPLE_TASK);
-        printTasksByType(TypeOfTask.EPIC);
-        printTasksByType(TypeOfTask.SUBTASK);
-    }
-
+    @Override
     public void printTasksByType(TypeOfTask type) {
         if (getListOfTasks(type) != null) {
             System.out.println(getListOfTasks(type));
         }
     }
 
+    @Override
     public void updateStatusOfEpic(Epic epic) {
         boolean isInProgress = false;
         boolean isDone = false;
@@ -133,8 +139,10 @@ public class TaskTrackerManager {
         }
     }
 
-    private void addSubtaskToEpic(Subtask subtask) {
+    @Override
+    public void addSubtaskToEpic(Subtask subtask) {
         ((Epic) tasksById.get(subtask.getEpicID())).addSubtaskID(subtask.getId());
         updateStatusOfEpic(((Epic) tasksById.get(subtask.getEpicID())));
     }
+
 }
