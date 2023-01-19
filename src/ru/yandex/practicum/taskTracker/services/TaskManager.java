@@ -1,16 +1,15 @@
-package ru.yandex.practicum.taskTracker.service;
+package ru.yandex.practicum.taskTracker.services;
 
-import ru.yandex.practicum.taskTracker.model.Epic;
-import ru.yandex.practicum.taskTracker.model.SimpleTask;
-import ru.yandex.practicum.taskTracker.model.Subtask;
-import ru.yandex.practicum.taskTracker.model.Task;
+import ru.yandex.practicum.taskTracker.models.Epic;
+import ru.yandex.practicum.taskTracker.models.SimpleTask;
+import ru.yandex.practicum.taskTracker.models.Subtask;
+import ru.yandex.practicum.taskTracker.models.Task;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public interface TaskManager {
 
-    ArrayList getListOfTasks(TypeOfTask type);
+    ArrayList<Task> getListOfTasks(TypeOfTask type);
 
     void createNewTask(SimpleTask task);
 

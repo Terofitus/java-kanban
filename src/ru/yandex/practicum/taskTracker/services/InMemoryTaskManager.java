@@ -1,9 +1,9 @@
-package ru.yandex.practicum.taskTracker.service;
+package ru.yandex.practicum.taskTracker.services;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import ru.yandex.practicum.taskTracker.model.*;
+import ru.yandex.practicum.taskTracker.models.*;
 
 class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasksById;
@@ -15,32 +15,20 @@ class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList getListOfTasks(TypeOfTask type) {
+    public ArrayList<Task> getListOfTasks(TypeOfTask type) {
         ArrayList<Task> tasksByType = new ArrayList<>();
         switch (type) {
             case TASK:
-                tasksByType.addAll(tasksById.values());
+                processTask(tasksByType);
                 break;
             case SIMPLE_TASK:
-                for (Task task: tasksById.values()) {
-                    if (task.getClass() == SimpleTask.class) {
-                        tasksByType.add(task);
-                    }
-                }
+                processSimpleTask(tasksByType);
                 break;
             case SUBTASK:
-                for (Task task: tasksById.values()) {
-                    if (task.getClass() == Subtask.class) {
-                        tasksByType.add(task);
-                    }
-                }
+                processSubTask(tasksByType);
                 break;
             case EPIC:
-                for (Task task: tasksById.values()) {
-                    if (task.getClass() == Epic.class) {
-                        tasksByType.add(task);
-                    }
-                }
+                processEpic(tasksByType);
                 break;
         }
         if (tasksByType.isEmpty()) {
@@ -48,6 +36,34 @@ class InMemoryTaskManager implements TaskManager {
             return null;
         }
         return tasksByType;
+    }
+
+    private void processEpic(ArrayList<Task> tasksByType) {
+        for (Task task: tasksById.values()) {
+            if (task.getClass() == Epic.class) {
+                tasksByType.add(task);
+            }
+        }
+    }
+
+    private void processSubTask(ArrayList<Task> tasksByType) {
+        for (Task task: tasksById.values()) {
+            if (task.getClass() == Subtask.class) {
+                tasksByType.add(task);
+            }
+        }
+    }
+
+    private void processSimpleTask(ArrayList<Task> tasksByType) {
+        for (Task task: tasksById.values()) {
+            if (task.getClass() == SimpleTask.class) {
+                tasksByType.add(task);
+            }
+        }
+    }
+
+    private void processTask(ArrayList<Task> tasksByType) {
+        tasksByType.addAll(tasksById.values());
     }
 
     @Override
@@ -64,10 +80,8 @@ class InMemoryTaskManager implements TaskManager {
         if (!tasksById.containsValue(epic)) {
             tasksById.put(epic.getId(), epic);
             for (Task task: tasksById.values()) {
-                if (task.getClass() == Subtask.class) {
-                    if (((Subtask) task).getEpicID() == epic.getId()){
+                if (task.getClass() == Subtask.class && ((Subtask) task).getEpicID() == epic.getId()) {
                         epic.addSubtaskID(task.getId());
-                    }
                 }
             }
         } else {

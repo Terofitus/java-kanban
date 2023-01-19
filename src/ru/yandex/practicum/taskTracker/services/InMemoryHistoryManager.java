@@ -1,6 +1,6 @@
-package ru.yandex.practicum.taskTracker.service;
+package ru.yandex.practicum.taskTracker.services;
 
-import ru.yandex.practicum.taskTracker.model.*;
+import ru.yandex.practicum.taskTracker.models.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -22,15 +22,15 @@ class InMemoryHistoryManager implements HistoryManager {
         return history;
     }
 
-    static class FixedLinkedList<E> extends LinkedList {
+    static class FixedLinkedList<E> extends LinkedList<E> {
         int limit = 10;
 
         @Override
-        public boolean add(Object o) {
+        public boolean add(E e) {
             if (size() >= limit) {
                 removeFirst();
             }
-            return super.add(o);
+            return super.add(e);
         }
     }
 }

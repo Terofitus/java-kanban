@@ -1,4 +1,4 @@
-package ru.yandex.practicum.taskTracker.model;
+package ru.yandex.practicum.taskTracker.models;
 
 import java.util.ArrayList;
 
@@ -27,14 +27,19 @@ public class Epic extends Task {
                 '}';
     }
 
+    //оставил этот метод, так как в ревью присутствует правка на него. Переделал со StringBuilder,
+    //а после обнаружил, что мог просто в toString() вставить сам ArrayList и получить тоже самое
     private String getListOfIdOfSubtasks() {
-        String namesOfSubtasks = "";
+        StringBuilder namesOfSubtasks = new StringBuilder();
         if (subtasksID != null) {
-            for(Integer subtaskID: subtasksID) {
-                namesOfSubtasks += subtaskID + "|";
+            for( int i = 0; i < subtasksID.size(); i++) {
+                namesOfSubtasks.append(subtasksID.get(i));
+                if ( i != subtasksID.size() - 1) {
+                    namesOfSubtasks.append(", ");
+                }
             }
         }
-        return namesOfSubtasks;
+        return String.valueOf(namesOfSubtasks);
     }
 
     public void deleteSubtaskID(Integer id) {

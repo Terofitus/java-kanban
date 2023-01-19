@@ -1,27 +1,20 @@
-package ru.yandex.practicum.taskTracker.model;
+package ru.yandex.practicum.taskTracker.models;
 
-public class Subtask extends Task {
-    private final int epicID;
+public class SimpleTask extends Task {
 
-    public int getEpicID() {
-        return epicID;
-    }
-
-    public Subtask(String name, String description,Epic epic, Status status) {
+    public SimpleTask(String name, String description, Status status) {
         super(name, description);
         super.setId();
-        epicID = epic.getId();
         setStatus(status);
     }
 
     @Override
     public String toString() {
-        return "Subtask{" +
+        return "SimpleTask{" +
                 "name='" + getName() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", id=" + getId() +
                 ", status=" + getStatus() +
-                ", epicID=" + getEpicID() +
                 '}';
     }
 }

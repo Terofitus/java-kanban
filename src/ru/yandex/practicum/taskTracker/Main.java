@@ -1,7 +1,7 @@
 package ru.yandex.practicum.taskTracker;
 
-import ru.yandex.practicum.taskTracker.model.*;
-import ru.yandex.practicum.taskTracker.service.*;
+import ru.yandex.practicum.taskTracker.models.*;
+import ru.yandex.practicum.taskTracker.services.*;
 
 import java.util.List;
 

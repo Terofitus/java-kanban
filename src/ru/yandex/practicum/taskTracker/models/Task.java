@@ -1,4 +1,4 @@
-package ru.yandex.practicum.taskTracker.model;
+package ru.yandex.practicum.taskTracker.models;
 
 public abstract class Task {
     private final String name;
@@ -7,7 +7,7 @@ public abstract class Task {
     private Status status;
     private static Integer nextID = 0;
 
-    public Task(String name, String description) {
+    protected Task(String name, String description) {
         this.name = name;
         this.description = description;
     }
