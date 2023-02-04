@@ -1,5 +1,7 @@
 package ru.yandex.practicum.taskTracker.models;
 
+import java.util.Objects;
+
 public abstract class Task {
     private final String name;
     private final String description;
@@ -32,7 +34,22 @@ public abstract class Task {
         return id;
     }
 
-    public void setId(){
+    public void setId() {
         id = nextID++;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null && this.getClass() != obj.getClass()) return false;
+        Task otherTask = (Task) obj;
+        return Objects.equals(id, otherTask.id) && // проверяем все поля
+                Objects.equals(name, otherTask.name) && // нужно логическое «и»
+                Objects.equals(description, otherTask.description);
     }
 }

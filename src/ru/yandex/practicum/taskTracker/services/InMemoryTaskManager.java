@@ -2,16 +2,16 @@ package ru.yandex.practicum.taskTracker.services;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import ru.yandex.practicum.taskTracker.models.*;
 
 class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasksById;
-    HistoryManager historyManager;
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     public InMemoryTaskManager() {
         tasksById = new HashMap<>();
-        historyManager = Managers.getDefaultHistory();
     }
 
     @Override
@@ -20,15 +20,27 @@ class InMemoryTaskManager implements TaskManager {
         switch (type) {
             case TASK:
                 processTask(tasksByType);
+                for (Task task : tasksByType) {
+                    historyManager.add(task);
+                }
                 break;
             case SIMPLE_TASK:
                 processSimpleTask(tasksByType);
+                for (Task task : tasksByType) {
+                    historyManager.add(task);
+                }
                 break;
             case SUBTASK:
                 processSubTask(tasksByType);
+                for (Task task : tasksByType) {
+                    historyManager.add(task);
+                }
                 break;
             case EPIC:
                 processEpic(tasksByType);
+                for (Task task : tasksByType) {
+                    historyManager.add(task);
+                }
                 break;
         }
         if (tasksByType.isEmpty()) {
@@ -105,6 +117,9 @@ class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteAllTasks() {
+        for (Integer id : tasksById.keySet()) {
+            historyManager.remove(id);
+        }
         tasksById.clear();
     }
 
@@ -118,13 +133,20 @@ class InMemoryTaskManager implements TaskManager {
     public void deleteTaskById(int id) {
         Task task = tasksById.get(id);
         if (task.getClass() == Epic.class) {
-            for (Integer subtaskID: ((Epic) task).getSubtasksID()) {
-                deleteTaskById(subtaskID);
+            //без дополнительного списка и цикла на удаление выбрасывает ConcurrentModificationException
+            List<Integer> idOfSubtasks = new ArrayList<>();
+            for (Integer subtaskID : ((Epic) task).getSubtasksID()) {
+                historyManager.remove(subtaskID);
+                idOfSubtasks.add(subtaskID);
+            }
+            for (Integer subtaskID : idOfSubtasks) {
+                tasksById.remove(subtaskID);
             }
         } else if (task.getClass() == Subtask.class) {
             ((Epic) tasksById.get(((Subtask) task).getEpicID())).deleteSubtaskID(task.getId());
         }
         tasksById.remove(task.getId());
+        historyManager.remove(task.getId());
     }
 
     @Override
