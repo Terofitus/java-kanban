@@ -2,35 +2,110 @@ package ru.yandex.practicum.taskTracker.services;
 
 import ru.yandex.practicum.taskTracker.models.*;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 class InMemoryHistoryManager implements HistoryManager {
-    private final List<Task> history;
+    private final LinkedListOfHistory<Task> history;
 
-    InMemoryHistoryManager(){
-        history = new FixedLinkedList<>();
+
+    InMemoryHistoryManager() {
+        history = new LinkedListOfHistory<>();
     }
 
     @Override
     public void add(Task task) {
-        history.add(task);
+        history.linkLast(task);
     }
 
     @Override
     public List<Task> getHistory() {
-        return history;
+        return history.getTasks();
     }
 
-    static class FixedLinkedList<E> extends LinkedList<E> {
-        int limit = 10;
+    @Override
+    public void remove(int id) {
+        history.remove(id);
+    }
 
-        @Override
-        public boolean add(E e) {
-            if (size() >= limit) {
-                removeFirst();
+    static final class LinkedListOfHistory<T extends Task> {
+        private final HashMap<Integer, Node<T>> mapOfHistoryOfTasks;
+        private Node<T> head;
+        private Node<T> tail;
+
+        public LinkedListOfHistory() {
+            this.head = null;
+            this.tail = null;
+            mapOfHistoryOfTasks = new HashMap<>();
+        }
+
+
+        private void linkLast(T ob) {
+            if (this.head == null) {
+                Node<T> node = new Node<>(null, ob, null);
+                this.head = this.tail = node;
+                mapOfHistoryOfTasks.put(ob.getId(), node);
+            } else {
+                Node<T> oldTail = this.tail;
+                if (mapOfHistoryOfTasks.containsKey(ob.getId())) {
+                    if (tail.element.equals(ob)) return;
+                    remove(ob.getId());
+                    oldTail.next = tail = new Node<>(oldTail, ob, null);
+                    mapOfHistoryOfTasks.put(ob.getId(), this.tail);
+                } else {
+                    oldTail.next = this.tail = new Node<>(oldTail, ob, null);
+                    mapOfHistoryOfTasks.put(ob.getId(), this.tail);
+                }
             }
-            return super.add(e);
+        }
+
+        private ArrayList<Task> getTasks() {
+            ArrayList<Task> arrayList = new ArrayList<>();
+            if (this.tail != null) {
+                Node<T> node = this.head;
+                while (node != null) {
+                    arrayList.add(node.element);
+                    node = node.next;
+                }
+            }
+            return arrayList;
+        }
+
+        private void remove(int id) {
+            if (mapOfHistoryOfTasks.containsKey(id)) {
+                Node<T> oldNode = mapOfHistoryOfTasks.get(id);
+                if (oldNode == head && oldNode == tail
+                        && oldNode.prev == null) {
+                    mapOfHistoryOfTasks.remove(id);
+                    head = tail = null;
+                } else if (oldNode.prev != null && oldNode.next != null) {
+                    oldNode.prev.next = oldNode.next;
+                    oldNode.next.prev = oldNode.prev;
+                    mapOfHistoryOfTasks.remove(id);
+                } else if (oldNode.prev != null) {
+                    tail = oldNode.prev;
+                    oldNode.prev.next = null;
+                    mapOfHistoryOfTasks.remove(id);
+                } else if (oldNode.next != null) {
+                    head = oldNode.next;
+                    oldNode.next.prev = null;
+                    mapOfHistoryOfTasks.remove(id);
+                }
+            }
+        }
+
+        static final class Node<T extends Task> {
+            Node<T> prev;
+            T element;
+            Node<T> next;
+
+            public Node(Node<T> prev, T element, Node<T> next) {
+                this.prev = prev;
+                this.element = element;
+                this.next = next;
+            }
         }
     }
 }
+
