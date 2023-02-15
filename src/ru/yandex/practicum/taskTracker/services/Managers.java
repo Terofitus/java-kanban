@@ -7,11 +7,15 @@ public class Managers {
     private Managers() {
     }
 
-    public static TaskManager getDefault() {
+    public static TaskManager getFileBackedTasksManager() {
         if (taskManager == null) {
-            taskManager = new InMemoryTaskManager();
+            taskManager = new FileBackedTasksManager();
         }
         return taskManager;
+    }
+
+    public static TaskManager getInMemoryTasksManager() {
+        return new InMemoryTaskManager();
     }
 
     public static HistoryManager getDefaultHistory() {

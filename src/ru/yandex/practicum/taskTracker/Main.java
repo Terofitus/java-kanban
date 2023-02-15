@@ -3,13 +3,9 @@ package ru.yandex.practicum.taskTracker;
 import ru.yandex.practicum.taskTracker.models.*;
 import ru.yandex.practicum.taskTracker.services.*;
 
-import java.util.List;
-
 public class Main {
     public static void main(String[] args) {
-        // внизу в виде закомментированного метода оставил собственные вызовы методов, по которым проверял себя
-        // надеюсь, это не проблема
-        TaskManager taskTrackerManager = Managers.getDefault();
+        TaskManager taskTrackerManager = Managers.getFileBackedTasksManager();
         HistoryManager historyManager = Managers.getDefaultHistory();
         SimpleTask simpleTask = new SimpleTask("Simple Task #1", "Description of Simple Task #1",
                 Status.NEW);
@@ -55,10 +51,10 @@ public class Main {
         System.out.println(historyManager.getHistory());
     }
 
-    /*static void myPersonalTest() {
-        TaskManager taskTrackerManager = Managers.getDefault();
+    static void myPersonalTest() {
+        TaskManager taskTrackerManager = Managers.getFileBackedTasksManager();
         HistoryManager historyManager = Managers.getDefaultHistory();
-        SimpleTask simpleTask = new SimpleTask("Simple Task #1","Description of Simple Task #1",
+        SimpleTask simpleTask = new SimpleTask("Simple Task #1", "Description of Simple Task #1",
                 Status.NEW);
         SimpleTask simpleTask1 = new SimpleTask("Simple Task #2", "Description of Simple Task #2",
                 Status.IN_PROGRESS);
@@ -83,17 +79,17 @@ public class Main {
         subtaskOfEpic2.setStatus(Status.DONE);
         taskTrackerManager.updateStatusOfEpic(epic2);
         taskTrackerManager.getTaskById(0);
-        taskTrackerManager.getTaskById(0);
         taskTrackerManager.getTaskById(1);
         taskTrackerManager.getTaskById(0);
         taskTrackerManager.getTaskById(2);
         taskTrackerManager.getTaskById(3);
         taskTrackerManager.getTaskById(4);
         taskTrackerManager.getTaskById(5);
-        taskTrackerManager.getTaskById(5);
         taskTrackerManager.getTaskById(4);
         System.out.println("");
         int i = 1;
+        taskTrackerManager.getTaskById(2);
+        taskTrackerManager.getTaskById(6);
         for (Task task : historyManager.getHistory()) {
             System.out.println("Task #" + i++ + ": " + task);
         }
@@ -106,17 +102,15 @@ public class Main {
         }
         System.out.println("");
         i = 1;
-        taskTrackerManager.printTasksByType(TypeOfTask.TASK);
         for (Task task : historyManager.getHistory()) {
             System.out.println("Task #" + i++ + ": " + task);
         }
         System.out.println("");
-        taskTrackerManager.deleteAllTasks();
         i = 1;
         for (Task task : historyManager.getHistory()) {
             System.out.println("Task #" + i++ + ": " + task);
         }
-        taskTrackerManager.printTasksByType(TypeOfTask.TASK);
-    }*/
+        System.out.println(FileBackedTasksManager.historyToString(historyManager));
+    }
 }
 

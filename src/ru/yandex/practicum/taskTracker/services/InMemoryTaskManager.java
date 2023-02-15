@@ -14,15 +14,28 @@ class InMemoryTaskManager implements TaskManager {
         tasksById = new HashMap<>();
     }
 
+    boolean isNotEmptyMap() {
+        return !tasksById.isEmpty();
+    }
+
     @Override
     public ArrayList<Task> getListOfTasks(TypeOfTask type) {
+        ArrayList<Task> tasksByType = getListOfTasksWithoutSaveInHistory(type);
+        for (Task task : tasksByType) {
+            historyManager.add(task);
+        }
+        if (tasksByType.isEmpty()) {
+            System.out.println("Нет задач типа " + type + ".");
+        }
+        return tasksByType;
+    }
+
+    ArrayList<Task> getListOfTasksWithoutSaveInHistory(TypeOfTask type) {
         ArrayList<Task> tasksByType = new ArrayList<>();
         switch (type) {
             case TASK:
                 processTask(tasksByType);
-                for (Task task : tasksByType) {
-                    historyManager.add(task);
-                }
+
                 break;
             case SIMPLE_TASK:
                 processSimpleTask(tasksByType);
@@ -42,10 +55,6 @@ class InMemoryTaskManager implements TaskManager {
                     historyManager.add(task);
                 }
                 break;
-        }
-        if (tasksByType.isEmpty()) {
-            System.out.println("Нет задач типа " + type + ".");
-            return null;
         }
         return tasksByType;
     }
@@ -125,8 +134,13 @@ class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(Integer id) {
-        historyManager.add(tasksById.get(id));
-        return tasksById.get(id);
+        if (tasksById.containsKey(id)) {
+            historyManager.add(tasksById.get(id));
+            return tasksById.get(id);
+        } else {
+            return tasksById.get(id);
+
+        }
     }
 
     @Override
@@ -162,23 +176,31 @@ class InMemoryTaskManager implements TaskManager {
         boolean isDone = false;
         if (!epic.getSubtasksID().isEmpty()) {
             for (Integer subtaskID: epic.getSubtasksID()) {
-                if (tasksById.get(subtaskID).getStatus() == Status.IN_PROGRESS) {
-                    isInProgress = true;
+                if (tasksById.containsKey(subtaskID)) {
+                    if (tasksById.get(subtaskID).getStatus() == Status.IN_PROGRESS) {
+                        isInProgress = true;
+                    }
+                    isDone = tasksById.get(subtaskID).getStatus() == Status.DONE;
                 }
-                isDone = tasksById.get(subtaskID).getStatus() == Status.DONE;
             }
         }
         if (isDone) {
             epic.setStatus(Status.DONE);
         } else if (isInProgress) {
             epic.setStatus(Status.IN_PROGRESS);
+        } else {
+            epic.setStatus(Status.NEW);
         }
     }
 
     @Override
     public void addSubtaskToEpic(Subtask subtask) {
-        ((Epic) tasksById.get(subtask.getEpicID())).addSubtaskID(subtask.getId());
-        updateStatusOfEpic(((Epic) tasksById.get(subtask.getEpicID())));
+        Epic epic = ((Epic) tasksById.get(subtask.getEpicID()));
+        if (epic != null) {
+            epic.addSubtaskID(subtask.getId());
+            updateStatusOfEpic(((Epic) tasksById.get(subtask.getEpicID())));
+        } else {
+            System.out.println("Данного эпика не существует!");
+        }
     }
-
 }

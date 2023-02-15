@@ -14,11 +14,11 @@ public abstract class Task {
         this.description = description;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 
-    String getDescription() {
+    public String getDescription() {
         return description;
     }
 
@@ -46,10 +46,9 @@ public abstract class Task {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (obj == null && this.getClass() != obj.getClass()) return false;
+        if (obj == null || this.getClass() != obj.getClass()) return false;
         Task otherTask = (Task) obj;
-        return Objects.equals(id, otherTask.id) && // проверяем все поля
-                Objects.equals(name, otherTask.name) && // нужно логическое «и»
+        return Objects.equals(name, otherTask.name) &&
                 Objects.equals(description, otherTask.description);
     }
 }

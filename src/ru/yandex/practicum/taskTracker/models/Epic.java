@@ -1,10 +1,9 @@
 package ru.yandex.practicum.taskTracker.models;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class Epic extends Task {
-    private ArrayList<Integer> subtasksID;
+    private final ArrayList<Integer> subtasksID;
 
     public Epic(String name, String description) {
         super(name, description);
@@ -28,8 +27,15 @@ public class Epic extends Task {
                 '}';
     }
 
-    private String getListOfIdOfSubtasks() {
-        return subtasksID.toString();
+    public String getListOfIdOfSubtasks() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < subtasksID.size(); i++) {
+            sb.append(subtasksID.get(i));
+            if (i != subtasksID.size() - 1) {
+                sb.append(";");
+            }
+        }
+        return sb.toString();
     }
 
     public void deleteSubtaskID(Integer id) {
@@ -37,6 +43,8 @@ public class Epic extends Task {
     }
 
     public void addSubtaskID(Integer id) {
-        subtasksID.add(id);
+        if (!subtasksID.contains(id)) {
+            subtasksID.add(id);
+        }
     }
 }

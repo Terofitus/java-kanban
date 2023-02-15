@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 class InMemoryHistoryManager implements HistoryManager {
-    private final LinkedListOfHistory<Task> history;
+    final LinkedListOfHistory<Task> history;
 
 
     InMemoryHistoryManager() {
@@ -50,12 +50,9 @@ class InMemoryHistoryManager implements HistoryManager {
                 if (mapOfHistoryOfTasks.containsKey(ob.getId())) {
                     if (tail.element.equals(ob)) return;
                     remove(ob.getId());
-                    oldTail.next = tail = new Node<>(oldTail, ob, null);
-                    mapOfHistoryOfTasks.put(ob.getId(), this.tail);
-                } else {
-                    oldTail.next = this.tail = new Node<>(oldTail, ob, null);
-                    mapOfHistoryOfTasks.put(ob.getId(), this.tail);
                 }
+                oldTail.next = tail = new Node<>(oldTail, ob, null);
+                mapOfHistoryOfTasks.put(ob.getId(), this.tail);
             }
         }
 
