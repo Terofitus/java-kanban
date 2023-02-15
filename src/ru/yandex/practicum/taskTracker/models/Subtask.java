@@ -1,5 +1,7 @@
 package ru.yandex.practicum.taskTracker.models;
 
+import java.util.Objects;
+
 public class Subtask extends Task {
     private final int epicID;
 
