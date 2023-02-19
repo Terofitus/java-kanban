@@ -34,8 +34,12 @@ public abstract class Task {
         return id;
     }
 
-    public void setId() {
-        id = nextID++;
+    public static void setNewId(Task task) {
+        task.id = nextID++;
+    }
+
+    public void setOldId(int id) {
+        this.id = id;
     }
 
     @Override

@@ -1,7 +1,5 @@
 package ru.yandex.practicum.taskTracker.models;
 
-import java.util.Objects;
-
 public class Subtask extends Task {
     private final int epicID;
 
@@ -11,14 +9,12 @@ public class Subtask extends Task {
 
     public Subtask(String name, String description, Epic epic, Status status) {
         super(name, description);
-        super.setId();
         epicID = epic.getId();
         setStatus(status);
     }
 
     public Subtask(String name, String description, Integer epicID, Status status) {
         super(name, description);
-        super.setId();
         this.epicID = epicID;
         setStatus(status);
     }

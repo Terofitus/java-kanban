@@ -33,28 +33,17 @@ class InMemoryTaskManager implements TaskManager {
     ArrayList<Task> getListOfTasksWithoutSaveInHistory(TypeOfTask type) {
         ArrayList<Task> tasksByType = new ArrayList<>();
         switch (type) {
-            case TASK:
-                processTask(tasksByType);
-
-                break;
             case SIMPLE_TASK:
                 processSimpleTask(tasksByType);
-                for (Task task : tasksByType) {
-                    historyManager.add(task);
-                }
                 break;
             case SUBTASK:
                 processSubTask(tasksByType);
-                for (Task task : tasksByType) {
-                    historyManager.add(task);
-                }
                 break;
             case EPIC:
                 processEpic(tasksByType);
-                for (Task task : tasksByType) {
-                    historyManager.add(task);
-                }
                 break;
+            default:
+                processTask(tasksByType);
         }
         return tasksByType;
     }
@@ -90,37 +79,56 @@ class InMemoryTaskManager implements TaskManager {
     @Override
     public void createNewTask(SimpleTask task) {
         if (!tasksById.containsValue(task)) {
+            Task.setNewId(task);
             tasksById.put(task.getId(), task);
         } else {
-            System.out.println("Данная задача уже добавлена в трекер.");
+            for (Task oldTask : tasksById.values()) {
+                if (oldTask.equals(task)) {
+                    task.setOldId(oldTask.getId());
+                }
+            }
+            tasksById.put(task.getId(), task);
         }
     }
 
     @Override
     public void createNewTask(Epic epic) {
         if (!tasksById.containsValue(epic)) {
+            Task.setNewId(epic);
             tasksById.put(epic.getId(), epic);
-            for (Task task: tasksById.values()) {
-                if (task.getClass() == Subtask.class && ((Subtask) task).getEpicID() == epic.getId()) {
-                        epic.addSubtaskID(task.getId());
+        } else {
+            for (Task task : tasksById.values()) {
+                if (task.equals(epic)) {
+                    epic.setOldId(task.getId());
                 }
             }
-        } else {
-            System.out.println("Данная задача уже добавлена в трекер.");
+            tasksById.put(epic.getId(), epic);
+        }
+        for (Task task : tasksById.values()) {
+            if (task.getClass() == Subtask.class && ((Subtask) task).getEpicID() == epic.getId()) {
+                epic.addSubtaskID(task.getId());
+            }
         }
     }
 
     @Override
     public void createNewTask(Subtask task) {
         if (!tasksById.containsValue(task)) {
+            Task.setNewId(task);
             tasksById.put(task.getId(), task);
-            if (tasksById.containsValue(tasksById.get(task.getEpicID()))) {
-                addSubtaskToEpic(task);
-            } else {
-                System.out.println("Вы не добавили глобальную задачу для данной подзадачи в таблицу!");
-            }
         } else {
-            System.out.println("Данная задача уже добавлена в трекер.");
+            for (Task oldTask : tasksById.values()) {
+                if (oldTask.equals(task)) {
+                    task.setOldId(oldTask.getId());
+                }
+            }
+            tasksById.put(task.getId(), task);
+            tasksById.put(task.getId(), task);
+        }
+        if (tasksById.containsValue(tasksById.get(task.getEpicID()))) {
+            addSubtaskToEpic(task);
+        } else {
+            System.out.println("Вы не добавили глобальную задачу для данной подзадачи в таблицу!");
         }
     }
 

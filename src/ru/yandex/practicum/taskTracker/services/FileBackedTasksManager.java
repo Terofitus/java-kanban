@@ -137,11 +137,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public static String historyToString(HistoryManager manager) {
         StringBuilder stringOfHistory = new StringBuilder();
         for (Task task : manager.getHistory()) {
-            stringOfHistory.append(task.getId());
+            stringOfHistory.append(task.getId()).append(" ");
         }
         if (stringOfHistory.length() > 1) {
-            stringOfHistory = new StringBuilder(stringOfHistory.toString().replaceAll("", ","));
-            return stringOfHistory.substring(1, stringOfHistory.length() - 1);
+            stringOfHistory = new StringBuilder(stringOfHistory.toString().replaceAll("\\s", ","));
+            return stringOfHistory.substring(0, stringOfHistory.length() - 1);
         } else {
             return stringOfHistory.toString();
         }
@@ -154,13 +154,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 String taskFromString = br.readLine();
                 while (!(taskFromString = br.readLine()).equals("")) {
                     Task task = fromString(taskFromString);
-                    if (task instanceof SimpleTask) {
-                        createNewTask((SimpleTask) task);
-                    } else if (task instanceof Epic) {
-                        createNewTask((Epic) task);
-                    } else if (task instanceof Subtask) {
-                        createNewTask((Subtask) task);
-                    }
+                    createNewTaskToLoad(task);
                 }
                 for (Integer integer : historyFromString(br.readLine())) {
                     getTaskById(integer);
@@ -180,32 +174,38 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
+    private void createNewTaskToLoad(Task task) {
+        if (task instanceof SimpleTask) {
+            createNewTask((SimpleTask) task);
+        } else if (task instanceof Epic) {
+            createNewTask((Epic) task);
+        } else if (task instanceof Subtask) {
+            createNewTask((Subtask) task);
+        }
+    }
+
     private Task fromString(String value) {
-        String[] splitedString = value.split(",");
-        String type = splitedString[1];
-        Status status = null;
-        Task task = null;
-        switch (splitedString[4]) {
-            case "NEW":
-                status = Status.NEW;
-                break;
+        String[] splitString = value.split(",");
+        String type = splitString[1];
+        Status status;
+        Task task;
+        switch (splitString[4]) {
             case "IN_PROGRESS":
                 status = Status.IN_PROGRESS;
                 break;
             case "DONE":
                 status = Status.DONE;
                 break;
+            default:
+                status = Status.NEW;
         }
         switch (type) {
-            case "SimpleTask":
-                task = new SimpleTask(splitedString[2], splitedString[3], status);
-                break;
             case "Epic":
-                Epic epic = new Epic(splitedString[2], splitedString[3]);
-                if (splitedString.length > 5) {
-                    splitedString[5] = splitedString[5].replace("[", "")
+                Epic epic = new Epic(splitString[2], splitString[3]);
+                if (splitString.length > 5) {
+                    splitString[5] = splitString[5].replace("[", "")
                             .replace("]", "");
-                    String[] subtasksID = splitedString[5].split(";");
+                    String[] subtasksID = splitString[5].split(";");
                     if (subtasksID.length != 0) {
                         for (String s : subtasksID) {
                             epic.addSubtaskID(Integer.parseInt(s));
@@ -215,8 +215,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 task = epic;
                 break;
             case "Subtask":
-                task = new Subtask(splitedString[2], splitedString[3], Integer.parseInt(splitedString[5]), status);
+                task = new Subtask(splitString[2], splitString[3], Integer.parseInt(splitString[5]), status);
                 break;
+            default:
+                task = new SimpleTask(splitString[2], splitString[3], status);
         }
         return task;
     }

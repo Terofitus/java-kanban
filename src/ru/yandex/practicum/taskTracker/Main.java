@@ -1,31 +1,38 @@
 package ru.yandex.practicum.taskTracker;
 
 import ru.yandex.practicum.taskTracker.models.*;
-import ru.yandex.practicum.taskTracker.services.*;
+import ru.yandex.practicum.taskTracker.services.FileBackedTasksManager;
+import ru.yandex.practicum.taskTracker.services.HistoryManager;
+import ru.yandex.practicum.taskTracker.services.Managers;
+import ru.yandex.practicum.taskTracker.services.TaskManager;
 
 public class Main {
     public static void main(String[] args) {
+        secondTest();
+    }
+
+    static void firstTest() {
         TaskManager taskTrackerManager = Managers.getFileBackedTasksManager();
         HistoryManager historyManager = Managers.getDefaultHistory();
         SimpleTask simpleTask = new SimpleTask("Simple Task #1", "Description of Simple Task #1",
                 Status.NEW);
+        taskTrackerManager.createNewTask(simpleTask);
         SimpleTask simpleTask1 = new SimpleTask("Simple Task #2", "Description of Simple Task #2",
                 Status.IN_PROGRESS);
+        taskTrackerManager.createNewTask(simpleTask1);
         Epic epic1 = new Epic("Epic #1", "Description of Epic #1");
+        taskTrackerManager.createNewTask(epic1);
         Subtask subtask = new Subtask("Subtask #1 of Epic #1", "Description of Subtask #1 of Epic #1",
                 epic1, Status.IN_PROGRESS);
+        taskTrackerManager.createNewTask(subtask);
         Subtask subtask1 = new Subtask("Subtask #2 of Epic #1", "Description of Subtask #2 of Epic #1",
                 epic1, Status.NEW);
+        taskTrackerManager.createNewTask(subtask1);
         Subtask subtaskOfEpic1 = new Subtask("Subtask #1 of Epic #2",
                 "Description of Subtask #1 of Epic #2",
                 epic1, Status.NEW);
-        Epic epic2 = new Epic("Epic #1", "Description of Epic #1");
-        taskTrackerManager.createNewTask(simpleTask);
-        taskTrackerManager.createNewTask(simpleTask1);
-        taskTrackerManager.createNewTask(epic1);
-        taskTrackerManager.createNewTask(subtask);
-        taskTrackerManager.createNewTask(subtask1);
         taskTrackerManager.createNewTask(subtaskOfEpic1);
+        Epic epic2 = new Epic("Epic #1", "Description of Epic #1");
         taskTrackerManager.createNewTask(epic2);
         taskTrackerManager.getTaskById(0);
         System.out.println(historyManager.getHistory());
@@ -51,28 +58,28 @@ public class Main {
         System.out.println(historyManager.getHistory());
     }
 
-    static void myPersonalTest() {
+    static void secondTest() {
         TaskManager taskTrackerManager = Managers.getFileBackedTasksManager();
         HistoryManager historyManager = Managers.getDefaultHistory();
         SimpleTask simpleTask = new SimpleTask("Simple Task #1", "Description of Simple Task #1",
                 Status.NEW);
+        taskTrackerManager.createNewTask(simpleTask);
         SimpleTask simpleTask1 = new SimpleTask("Simple Task #2", "Description of Simple Task #2",
                 Status.IN_PROGRESS);
+        taskTrackerManager.createNewTask(simpleTask1);
         Epic epic1 = new Epic("Epic #1", "Description of Epic #1");
+        taskTrackerManager.createNewTask(epic1);
         Subtask subtask = new Subtask("Subtask #1 of Epic #1", "Description of Subtask #1 of Epic #1",
                 epic1, Status.IN_PROGRESS);
+        taskTrackerManager.createNewTask(subtask);
         Subtask subtask1 = new Subtask("Subtask #2 of Epic #1", "Description of Subtask #2 of Epic #1",
                 epic1, Status.NEW);
+        taskTrackerManager.createNewTask(subtask1);
         Epic epic2 = new Epic("Epic #2", "Description of Epic #2");
+        taskTrackerManager.createNewTask(epic2);
         Subtask subtaskOfEpic2 = new Subtask("Subtask #1 of Epic #2",
                 "Description of Subtask #1 of Epic #2",
                 epic2, Status.NEW);
-        taskTrackerManager.createNewTask(simpleTask);
-        taskTrackerManager.createNewTask(simpleTask1);
-        taskTrackerManager.createNewTask(epic1);
-        taskTrackerManager.createNewTask(subtask);
-        taskTrackerManager.createNewTask(subtask1);
-        taskTrackerManager.createNewTask(epic2);
         taskTrackerManager.createNewTask(subtaskOfEpic2);
         System.out.println(taskTrackerManager.getTaskById(0));
         System.out.println(historyManager.getHistory());
