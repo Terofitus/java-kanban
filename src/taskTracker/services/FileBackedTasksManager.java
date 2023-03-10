@@ -1,14 +1,15 @@
-package ru.yandex.practicum.taskTracker.services;
+package services;
 
-import ru.yandex.practicum.taskTracker.exceptions.ManagerLoadException;
-import ru.yandex.practicum.taskTracker.exceptions.ManagerSaveException;
-import ru.yandex.practicum.taskTracker.models.*;
+import exceptions.ManagerLoadException;
+import exceptions.ManagerSaveException;
+import models.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,8 +78,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateStatusOfEpic(Epic epic) {
-        super.updateStatusOfEpic(epic);
+    public void updateEpic(Epic epic) {
+        super.updateEpic(epic);
         save();
     }
 
@@ -103,7 +104,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         try (BufferedWriter bw = new BufferedWriter(
                 new FileWriter(pathToFile.toAbsolutePath().toString(), StandardCharsets.UTF_8))) {
-            bw.write("id,type,name,description,status,IDs of epic or subtasks\n");
+            bw.write("id,type,name,description,status,start time,duration,end time,IDs of epic or subtasks\n");
             if (isNotEmptyMap()) {
                 for (Task task : getListOfTasksWithoutSave()) {
                     bw.write(toString(task));
@@ -118,18 +119,26 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private String toString(Task task) {
         String info = null;
         String type;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         if (task instanceof SimpleTask) {
             type = "SimpleTask";
             info = task.getId() + "," + type + "," + task.getName() + "," + task.getDescription()
-                    + "," + task.getStatus();
+                    + "," + task.getStatus() + "," + task.getStartTime().format(formatter)
+                    + "," + task.getDurationOfTask() + "," + task.getEndTime().format(formatter);
         } else if (task instanceof Epic) {
             type = "Epic";
             info = task.getId() + "," + type + "," + task.getName() + "," + task.getDescription()
-                    + "," + task.getStatus() + "," + ((Epic) task).getListOfIdOfSubtasks();
+                    + "," + task.getStatus()
+                    + "," + (task.getStartTime() != null ? task.getStartTime().format(formatter) : null)
+                    + "," + (task.getDurationOfTask() != null ? task.getDurationOfTask() : null)
+                    + "," + (task.getEndTime() != null ? task.getEndTime().format(formatter) : null)
+                    + "," + ((Epic) task).getListOfIdOfSubtasks();
         } else if (task instanceof Subtask) {
             type = "Subtask";
             info = task.getId() + "," + type + "," + task.getName() + "," + task.getDescription()
-                    + "," + task.getStatus() + "," + ((Subtask) task).getEpicID();
+                    + "," + task.getStatus() + "," + task.getStartTime().format(formatter)
+                    + "," + task.getDurationOfTask() + "," + task.getEndTime().format(formatter)
+                    + "," + ((Subtask) task).getEpicID();
         }
         return info + "\n";
     }
@@ -202,10 +211,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         switch (type) {
             case "Epic":
                 Epic epic = new Epic(splitString[2], splitString[3]);
-                if (splitString.length > 5) {
-                    splitString[5] = splitString[5].replace("[", "")
+                if (splitString.length > 8) {
+                    splitString[8] = splitString[8].replace("[", "")
                             .replace("]", "");
-                    String[] subtasksID = splitString[5].split(";");
+                    String[] subtasksID = splitString[8].split(";");
                     if (subtasksID.length != 0) {
                         for (String s : subtasksID) {
                             epic.addSubtaskID(Integer.parseInt(s));
@@ -215,10 +224,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 task = epic;
                 break;
             case "Subtask":
-                task = new Subtask(splitString[2], splitString[3], Integer.parseInt(splitString[5]), status);
+                task = new Subtask(splitString[2], splitString[3], Integer.parseInt(splitString[8])
+                        , status, splitString[5], Integer.parseInt(splitString[6]));
                 break;
             default:
-                task = new SimpleTask(splitString[2], splitString[3], status);
+                task = new SimpleTask(splitString[2], splitString[3], status, splitString[5]
+                        , Integer.parseInt(splitString[6]));
         }
         return task;
     }

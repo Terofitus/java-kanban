@@ -1,6 +1,7 @@
-package ru.yandex.practicum.taskTracker.services;
+package services;
 
-import ru.yandex.practicum.taskTracker.models.Task;
+import models.Task;
+
 import java.util.List;
 
 public interface HistoryManager {

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.taskTracker.models;
+package models;
 
 public enum Status {
     NEW, IN_PROGRESS, DONE

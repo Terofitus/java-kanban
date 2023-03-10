@@ -1,5 +1,7 @@
-package ru.yandex.practicum.taskTracker.models;
+package models;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public abstract class Task {
@@ -7,11 +9,20 @@ public abstract class Task {
     private final String description;
     private Integer id;
     private Status status;
+    private LocalDateTime startTime;
+    private Integer durationOfTask;
     private static Integer nextID = 0;
 
     protected Task(String name, String description) {
         this.name = name;
         this.description = description;
+    }
+
+    protected Task(String name, String description, String startOfTask, int duration) {
+        this.name = name;
+        this.description = description;
+        startTime = LocalDateTime.parse(startOfTask, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+        durationOfTask = duration;
     }
 
     public String getName() {
@@ -40,6 +51,26 @@ public abstract class Task {
 
     public void setOldId(int id) {
         this.id = id;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plusMinutes(durationOfTask);
+    }
+
+    protected void setStartTime(LocalDateTime time) {
+        startTime = time;
+    }
+
+    protected void setDurationOfTask(int duration) {
+        durationOfTask = duration;
+    }
+
+    public Integer getDurationOfTask() {
+        return durationOfTask;
     }
 
     @Override

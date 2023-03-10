@@ -1,6 +1,7 @@
-package ru.yandex.practicum.taskTracker.services;
+package services;
 
-import ru.yandex.practicum.taskTracker.models.*;
+import models.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,8 +72,7 @@ class InMemoryHistoryManager implements HistoryManager {
         private void remove(int id) {
             if (mapOfHistoryOfTasks.containsKey(id)) {
                 Node<T> oldNode = mapOfHistoryOfTasks.get(id);
-                if (oldNode == head && oldNode == tail
-                        && oldNode.prev == null) {
+                if (oldNode == head && oldNode == tail && oldNode.prev == null) {
                     mapOfHistoryOfTasks.remove(id);
                     head = tail = null;
                 } else if (oldNode.prev != null && oldNode.next != null) {

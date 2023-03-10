@@ -1,4 +1,4 @@
-package ru.yandex.practicum.taskTracker.services;
+package services;
 
 public class Managers {
     private static HistoryManager historyManager;

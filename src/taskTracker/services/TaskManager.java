@@ -1,9 +1,9 @@
-package ru.yandex.practicum.taskTracker.services;
+package services;
 
-import ru.yandex.practicum.taskTracker.models.Epic;
-import ru.yandex.practicum.taskTracker.models.SimpleTask;
-import ru.yandex.practicum.taskTracker.models.Subtask;
-import ru.yandex.practicum.taskTracker.models.Task;
+import models.Epic;
+import models.SimpleTask;
+import models.Subtask;
+import models.Task;
 
 import java.util.ArrayList;
 
@@ -25,7 +25,7 @@ public interface TaskManager {
 
     void printTasksByType(TypeOfTask type);
 
-    void updateStatusOfEpic(Epic epic);
+    void updateEpic(Epic epic);
 
     void addSubtaskToEpic(Subtask subtask);
 }
