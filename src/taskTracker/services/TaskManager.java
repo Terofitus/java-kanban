@@ -6,16 +6,17 @@ import models.Subtask;
 import models.Task;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 public interface TaskManager {
 
     ArrayList<Task> getListOfTasks(TypeOfTask type);
 
-    void createNewTask(SimpleTask task);
+    boolean createNewTask(SimpleTask task);
 
-    void createNewTask(Epic epic);
+    boolean createNewTask(Epic epic);
 
-    void createNewTask(Subtask task);
+    boolean createNewTask(Subtask task);
 
     void deleteAllTasks();
 
@@ -23,9 +24,7 @@ public interface TaskManager {
 
     void deleteTaskById(int id);
 
-    void printTasksByType(TypeOfTask type);
-
     void updateEpic(Epic epic);
 
-    void addSubtaskToEpic(Subtask subtask);
+    TreeSet<Task> getPrioritizedTasks();
 }

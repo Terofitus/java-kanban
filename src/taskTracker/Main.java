@@ -57,7 +57,7 @@ public class Main {
     }
 
     static void secondTest() {
-        TaskManager taskTrackerManager = Managers.getFileBackedTasksManager();
+        FileBackedTasksManager taskTrackerManager = (FileBackedTasksManager) Managers.getFileBackedTasksManager();
         HistoryManager historyManager = Managers.getDefaultHistory();
         SimpleTask simpleTask = new SimpleTask("Simple Task #1", "Description of Simple Task #1",
                 Status.NEW, "23.03.2023 22:22", 1200);
@@ -79,10 +79,11 @@ public class Main {
                 "Description of Subtask #1 of Epic #2",
                 epic2, Status.NEW, "26.03.2023 22:22", 16);
         taskTrackerManager.createNewTask(subtaskOfEpic2);
+        for (Task task : taskTrackerManager.getPrioritizedTasks()) {
+            System.out.println(task);
+        }
         System.out.println(taskTrackerManager.getTaskById(0));
         System.out.println(historyManager.getHistory());
-        subtaskOfEpic2.setStatus(Status.DONE);
-        taskTrackerManager.updateEpic(epic2);
         taskTrackerManager.getTaskById(0);
         taskTrackerManager.getTaskById(1);
         taskTrackerManager.getTaskById(0);

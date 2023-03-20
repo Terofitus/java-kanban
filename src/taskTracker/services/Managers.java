@@ -9,7 +9,7 @@ public class Managers {
 
     public static TaskManager getFileBackedTasksManager() {
         if (taskManager == null) {
-            taskManager = new FileBackedTasksManager();
+            taskManager = new FileBackedTasksManager(true, true);
         }
         return taskManager;
     }

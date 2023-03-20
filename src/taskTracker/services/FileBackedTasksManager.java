@@ -12,15 +12,21 @@ import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     Path pathToDirectory = Paths.get("src" + System.getProperty("file.separator") + "resources");
     Path pathToFile = Paths.get(pathToDirectory + System.getProperty("file.separator") + "save.csv");
+    boolean withSave;
 
 
-    public FileBackedTasksManager() {
+    public FileBackedTasksManager(boolean withLoad, boolean withSave) {
         super();
-        load();
+        if (withLoad) {
+            load();
+        }
+        this.withSave = withSave;
     }
 
     @Override
@@ -35,21 +41,33 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void createNewTask(SimpleTask task) {
-        super.createNewTask(task);
-        save();
+    public boolean createNewTask(SimpleTask task) {
+        boolean isCreated = super.createNewTask(task);
+        if (isCreated) {
+            save();
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void createNewTask(Epic epic) {
-        super.createNewTask(epic);
-        save();
+    public boolean createNewTask(Epic epic) {
+        boolean isCreated = super.createNewTask(epic);
+        if (isCreated) {
+            save();
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void createNewTask(Subtask task) {
-        super.createNewTask(task);
-        save();
+    public boolean createNewTask(Subtask task) {
+        boolean isCreated = super.createNewTask(task);
+        if (isCreated) {
+            save();
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -72,21 +90,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void printTasksByType(TypeOfTask type) {
-        super.printTasksByType(type);
-        save();
-    }
-
-    @Override
     public void updateEpic(Epic epic) {
         super.updateEpic(epic);
         save();
     }
 
     @Override
-    public void addSubtaskToEpic(Subtask subtask) {
-        super.addSubtaskToEpic(subtask);
-        save();
+    public TreeSet<Task> getPrioritizedTasks() {
+        return super.getPrioritizedTasks();
     }
 
     @Override
@@ -95,6 +106,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private void save() throws ManagerSaveException {
+        if (!withSave) return;
         try {
             if (!Files.exists(pathToDirectory.toAbsolutePath()))
                 Files.createDirectory(pathToDirectory.toAbsolutePath());
@@ -144,16 +156,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static String historyToString(HistoryManager manager) {
-        StringBuilder stringOfHistory = new StringBuilder();
-        for (Task task : manager.getHistory()) {
-            stringOfHistory.append(task.getId()).append(" ");
-        }
-        if (stringOfHistory.length() > 1) {
-            stringOfHistory = new StringBuilder(stringOfHistory.toString().replaceAll("\\s", ","));
-            return stringOfHistory.substring(0, stringOfHistory.length() - 1);
-        } else {
-            return stringOfHistory.toString();
-        }
+        return manager.getHistory().stream()
+                .map(Task::getId)
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
     }
 
     private void load() throws ManagerLoadException {
@@ -161,9 +167,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             try (BufferedReader br = new BufferedReader(
                     new FileReader(pathToFile.toAbsolutePath().toString(), StandardCharsets.UTF_8))) {
                 String taskFromString = br.readLine();
-                while (!(taskFromString = br.readLine()).equals("")) {
-                    Task task = fromString(taskFromString);
-                    createNewTaskToLoad(task);
+                if (br.ready()) {
+                    while (!(taskFromString = br.readLine()).equals("")) {
+                        Task task = fromString(taskFromString);
+                        createNewTaskToLoad(task);
+                    }
                 }
                 for (Integer integer : historyFromString(br.readLine())) {
                     getTaskById(integer);

@@ -24,11 +24,8 @@ public class Subtask extends Task {
     @Override
     public String toString() {
         return "Subtask{" +
-                "name='" + getName() + '\'' +
-                ", description='" + getDescription() + '\'' +
-                ", id=" + getId() +
-                ", status=" + getStatus() +
-                ", epicID=" + getEpicID() +
+                "name='" + getName() + '\'' + ", description='" + getDescription() + '\'' +
+                ", id=" + getId() + ", status=" + getStatus() + ", epicID=" + getEpicID() +
                 ", time of start=" + getStartTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) +
                 ", duration=" + getDurationOfTask() +
                 ", time of end=" + getEndTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) +

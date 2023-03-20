@@ -12,9 +12,7 @@ public class SimpleTask extends Task {
     @Override
     public String toString() {
         return "SimpleTask{" +
-                "name='" + getName() + '\'' +
-                ", description='" + getDescription() + '\'' +
-                ", id=" + getId() +
+                "name='" + getName() + '\'' + ", description='" + getDescription() + '\'' + ", id=" + getId() +
                 ", status=" + getStatus() +
                 ", time of start=" + getStartTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) +
                 ", duration=" + getDurationOfTask() +

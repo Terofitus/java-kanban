@@ -25,8 +25,12 @@ class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public void remove(int id) {
-        history.remove(id);
+    public boolean remove(int id) {
+        return history.remove(id);
+    }
+
+    public void deleteHistory() {
+        history.getTasks().stream().map(Task::getId).forEach(history::remove);
     }
 
     static final class LinkedListOfHistory<T extends Task> {
@@ -69,7 +73,8 @@ class InMemoryHistoryManager implements HistoryManager {
             return arrayList;
         }
 
-        private void remove(int id) {
+
+        private boolean remove(int id) {
             if (mapOfHistoryOfTasks.containsKey(id)) {
                 Node<T> oldNode = mapOfHistoryOfTasks.get(id);
                 if (oldNode == head && oldNode == tail && oldNode.prev == null) {
@@ -88,7 +93,9 @@ class InMemoryHistoryManager implements HistoryManager {
                     oldNode.next.prev = null;
                     mapOfHistoryOfTasks.remove(id);
                 }
+                return true;
             }
+            return false;
         }
 
     }

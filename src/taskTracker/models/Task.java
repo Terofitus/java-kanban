@@ -65,17 +65,17 @@ public abstract class Task {
         startTime = time;
     }
 
-    protected void setDurationOfTask(int duration) {
-        durationOfTask = duration;
-    }
-
     public Integer getDurationOfTask() {
         return durationOfTask;
     }
 
+    public static void resetCounterOfId() {
+        nextID = 0;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description);
+        return Objects.hash(name, description);
     }
 
     @Override
