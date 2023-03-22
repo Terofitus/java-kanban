@@ -208,14 +208,9 @@ public class InMemoryTaskManager implements TaskManager {
         if (!epic.getSubtasksID().isEmpty()) {
             isNew = false;
             for (Integer subtaskID : epic.getSubtasksID()) {
-                Task subTask = tasksById.get(subtaskID);
+                Subtask subTask = (Subtask) tasksById.get(subtaskID);
                 if (subTask != null) {
-                    if (epic.getStartTime() == null || subTask.getStartTime().isBefore(epic.getStartTime())) {
-                        epic.setStartTimeOfEpic(subTask.getStartTime());
-                    }
-                    if (epic.getEndTime() == null || subTask.getEndTime().isAfter(epic.getEndTime())) {
-                        epic.setEndOfEpic(subTask.getEndTime());
-                    }
+                    setStartAndEndTimeOfEpic(epic, subTask);
                     switch (subTask.getStatus()) {
                         case IN_PROGRESS:
                             isInProgress = true;
@@ -235,6 +230,15 @@ public class InMemoryTaskManager implements TaskManager {
             epic.setStatus(Status.IN_PROGRESS);
         } else {
             epic.setStatus(Status.NEW);
+        }
+    }
+
+    private void setStartAndEndTimeOfEpic(Epic epic, Subtask subTask) {
+        if (epic.getStartTime() == null || subTask.getStartTime().isBefore(epic.getStartTime())) {
+            epic.setStartTimeOfEpic(subTask.getStartTime());
+        }
+        if (epic.getEndTime() == null || subTask.getEndTime().isAfter(epic.getEndTime())) {
+            epic.setEndOfEpic(subTask.getEndTime());
         }
     }
 
