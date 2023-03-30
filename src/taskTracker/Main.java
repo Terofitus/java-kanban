@@ -1,16 +1,20 @@
 import models.*;
+import server.KVServer;
 import services.FileBackedTasksManager;
 import services.HistoryManager;
 import services.Managers;
 import services.TaskManager;
 
+import java.io.IOException;
+
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         secondTest();
     }
 
-    static void firstTest() {
-        TaskManager taskTrackerManager = Managers.getFileBackedTasksManager();
+    static void firstTest() throws IOException {
+        new KVServer().start();
+        TaskManager taskTrackerManager = Managers.getDefault();
         HistoryManager historyManager = Managers.getDefaultHistory();
         SimpleTask simpleTask = new SimpleTask("Simple Task #1", "Description of Simple Task #1",
                 Status.NEW, "22.02.2023 22:22", 100);
@@ -56,8 +60,9 @@ public class Main {
         System.out.println(historyManager.getHistory());
     }
 
-    static void secondTest() {
-        FileBackedTasksManager taskTrackerManager = (FileBackedTasksManager) Managers.getFileBackedTasksManager();
+    static void secondTest() throws IOException {
+        new KVServer().start();
+        TaskManager taskTrackerManager = Managers.getDefault();
         HistoryManager historyManager = Managers.getDefaultHistory();
         SimpleTask simpleTask = new SimpleTask("Simple Task #1", "Description of Simple Task #1",
                 Status.NEW, "23.03.2023 22:22", 1200);
@@ -83,7 +88,7 @@ public class Main {
             System.out.println(task);
         }
         System.out.println(taskTrackerManager.getTaskById(0));
-        System.out.println(historyManager.getHistory());
+        System.out.println(historyManager.getHistory() + "\n");
         taskTrackerManager.getTaskById(0);
         taskTrackerManager.getTaskById(1);
         taskTrackerManager.getTaskById(0);
@@ -92,7 +97,7 @@ public class Main {
         taskTrackerManager.getTaskById(4);
         taskTrackerManager.getTaskById(5);
         taskTrackerManager.getTaskById(4);
-        System.out.println("");
+
         int i = 1;
         taskTrackerManager.getTaskById(2);
         taskTrackerManager.getTaskById(6);

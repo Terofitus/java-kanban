@@ -84,6 +84,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
+    public Task getTaskByIdWithoutSaveInHistory(Integer id) {
+        return super.getTaskByIdWithoutSaveInHistory(id);
+    }
+
+    @Override
     public void deleteTaskById(int id) {
         super.deleteTaskById(id);
         save();
@@ -105,7 +110,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return super.isNotEmptyMap();
     }
 
-    private void save() throws ManagerSaveException {
+    void save() throws ManagerSaveException {
         if (!withSave) return;
         try {
             if (!Files.exists(pathToDirectory.toAbsolutePath()))
@@ -162,7 +167,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 .collect(Collectors.joining(","));
     }
 
-    private void load() throws ManagerLoadException {
+    void load() throws ManagerLoadException {
         if (Files.exists(pathToFile.toAbsolutePath())) {
             try (BufferedReader br = new BufferedReader(
                     new FileReader(pathToFile.toAbsolutePath().toString(), StandardCharsets.UTF_8))) {
@@ -242,7 +247,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return task;
     }
 
-    public static List<Integer> historyFromString(String value) {
+    private static List<Integer> historyFromString(String value) {
         List<Integer> listOfID = new ArrayList<>();
         if (value != null) {
             String[] splitedStringOfHistory = value.split(",");

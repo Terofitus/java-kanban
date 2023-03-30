@@ -177,6 +177,10 @@ public class InMemoryTaskManager implements TaskManager {
         return tasksById.get(id);
     }
 
+    public Task getTaskByIdWithoutSaveInHistory(Integer id) {
+        return tasksById.get(id);
+    }
+
     @Override
     public void deleteTaskById(int id) {
         if (!tasksById.containsKey(id)) return;
@@ -226,7 +230,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         if (isDone && !isInProgress && !isNew) {
             epic.setStatus(Status.DONE);
-        } else if (isInProgress || (isDone && isNew)) {
+        } else if (isInProgress || isDone) {
             epic.setStatus(Status.IN_PROGRESS);
         } else {
             epic.setStatus(Status.NEW);
