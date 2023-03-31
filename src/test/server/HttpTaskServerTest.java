@@ -250,7 +250,7 @@ class HttpTaskServerTest {
 
         HttpRequest request3 = HttpRequest.newBuilder(uri.resolve("/tasks/task/?id=1"))
                 .GET().build();
-        client.send(request3, HttpResponse.BodyHandlers.ofString());
+        HttpResponse response6 = client.send(request3, HttpResponse.BodyHandlers.ofString());
 
         HttpRequest request4 = HttpRequest.newBuilder(uri.resolve("/tasks/history"))
                 .GET().build();
@@ -258,35 +258,44 @@ class HttpTaskServerTest {
         var listOfTask = gson.fromJson(response4.body(), ArrayList.class);
         assertEquals(1, listOfTask.size());
     }
-// тест на получение сортированного множества выдает ошибку при парсинге из json, к сожаления, решить пока не удалось
-//    @Test
-//    void shouldReturnListOfPrioritizedTasksWhenCallEndpointTasksWithMethodGet() throws IOException, InterruptedException {
-//        SimpleTask simpleTask = new SimpleTask("Simple Task #1", "Description of Simple Task #1",
-//                Status.NEW, "23.03.2023 22:22", 1200);
-//        String jsonSimpleTask = gson.toJson(simpleTask);
-//        HttpRequest request = HttpRequest.newBuilder(uri.resolve("/tasks/task"))
-//                .POST(HttpRequest.BodyPublishers.ofString(jsonSimpleTask)).build();
-//        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-//
-//        SimpleTask simpleTask1 = new SimpleTask("Simple Task #2", "Description of Simple Task #2",
-//                Status.NEW, "24.03.2023 22:22", 1200);
-//        String jsonSimpleTask1 = gson.toJson(simpleTask1);
-//        HttpRequest request1 = HttpRequest.newBuilder(uri.resolve("/tasks/task"))
-//                .POST(HttpRequest.BodyPublishers.ofString(jsonSimpleTask1)).build();
-//        HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
-//
-//        SimpleTask simpleTask2 = new SimpleTask("Simple Task #3", "Description of Simple Task #3",
-//                Status.NEW, "25.03.2023 22:22", 1200);
-//        String jsonSimpleTask2 = gson.toJson(simpleTask2);
-//        HttpRequest request2 = HttpRequest.newBuilder(uri.resolve("/tasks/task"))
-//                .POST(HttpRequest.BodyPublishers.ofString(jsonSimpleTask2)).build();
-//        HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
-//
-//        HttpRequest request4 = HttpRequest.newBuilder(uri.resolve("/tasks"))
-//                .GET().build();
-//        HttpResponse<String> response4 = client.send(request4, HttpResponse.BodyHandlers.ofString());
-//        TreeSet setOfTasks = gson.fromJson(response4.body(), TreeSet.class);
-//        assertEquals(simpleTask, setOfTasks.first());
-//        assertEquals(simpleTask2, setOfTasks.last());
-//    }
+/*    @Test
+    void shouldReturnListOfPrioritizedTasksWhenCallEndpointTasksWithMethodGet() throws IOException, InterruptedException {
+        SimpleTask simpleTask = new SimpleTask("Simple Task #1", "Description of Simple Task #1",
+                Status.NEW, "23.03.2023 22:22", 1200);
+        String jsonSimpleTask = gson.toJson(simpleTask);
+        HttpRequest request = HttpRequest.newBuilder(uri.resolve("/tasks/task"))
+                .POST(HttpRequest.BodyPublishers.ofString(jsonSimpleTask)).build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        SimpleTask simpleTask1 = new SimpleTask("Simple Task #2", "Description of Simple Task #2",
+                Status.NEW, "24.03.2023 22:22", 1200);
+        String jsonSimpleTask1 = gson.toJson(simpleTask1);
+        HttpRequest request1 = HttpRequest.newBuilder(uri.resolve("/tasks/task"))
+                .POST(HttpRequest.BodyPublishers.ofString(jsonSimpleTask1)).build();
+        HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
+
+        SimpleTask simpleTask2 = new SimpleTask("Simple Task #3", "Description of Simple Task #3",
+                Status.NEW, "25.03.2023 22:22", 1200);
+        String jsonSimpleTask2 = gson.toJson(simpleTask2);
+        HttpRequest request2 = HttpRequest.newBuilder(uri.resolve("/tasks/task"))
+                .POST(HttpRequest.BodyPublishers.ofString(jsonSimpleTask2)).build();
+        HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+        Type type = new TypeToken<ArrayList<Task>>(){}.getType();
+        HttpRequest request4 = HttpRequest.newBuilder(uri.resolve("/tasks"))
+                .GET().build();
+        HttpResponse<String> response4 = client.send(request4, HttpResponse.BodyHandlers.ofString());
+        ArrayList<Task> list = gson.fromJson(response4.body(), type);
+
+        HttpRequest request5 = HttpRequest.newBuilder(uri.resolve("/tasks/task/?id=0"))
+                .GET().build();
+        HttpResponse<String> response5 = client.send(request5, HttpResponse.BodyHandlers.ofString());
+        var task1 = gson.fromJson(response5.body(), SimpleTask.class);
+        HttpRequest request6 = HttpRequest.newBuilder(uri.resolve("/tasks/task/?id=2"))
+                .GET().build();
+        HttpResponse<String> response6 = client.send(request6, HttpResponse.BodyHandlers.ofString());
+        var task2 = gson.fromJson(response6.body(), SimpleTask.class);
+
+        assertEquals(task1, list.get(0));
+        assertEquals(task2, list.get(2));
+    }*/
 }

@@ -51,7 +51,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     @Override
     void load() throws ManagerLoadException {
-        HistoryManager historyManager = Managers.getDefaultHistory();
         String listOfSimpleTasks = null;
         String listOfEpics = null;
         String listOfSubtasks = null;
@@ -65,6 +64,8 @@ public class HttpTaskManager extends FileBackedTasksManager {
             System.out.println("Во время загрузки произошло IOException");
         } catch (InterruptedException e) {
             System.out.println("Во время загрузки произошло InterruptedException");
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Во время загрузки произошло InterruptedException и поток был прерван");
         }
 
         var simpleTasks = gson.fromJson(listOfSimpleTasks, ArrayList.class);
