@@ -2,11 +2,16 @@ package services;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import models.Task;
 import server.KVClient;
 import server.LocalDateTimeAdapter;
+import server.ArrayListOfSortedTasksAdapter;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class Managers {
     private static HistoryManager historyManager;
@@ -54,7 +59,12 @@ public class Managers {
 
     public static Gson getGson() {
         if (gson == null) {
-            gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
+            Type type = new TypeToken<ArrayList<Task>>() {
+            }.getType();
+            gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                    .registerTypeAdapter(type, new ArrayListOfSortedTasksAdapter())
+                    .create();
         }
         return gson;
     }

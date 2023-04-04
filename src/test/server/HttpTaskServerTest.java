@@ -1,21 +1,21 @@
 package server;
 
 import com.google.gson.Gson;
-import models.Epic;
-import models.SimpleTask;
-import models.Status;
-import models.Subtask;
+import com.google.gson.reflect.TypeToken;
+import models.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import services.Managers;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -228,6 +228,12 @@ class HttpTaskServerTest {
 
     @Test
     void shouldReturnListOfHistoryWhenCallEndpointTasksHistoryWithMethodGet() throws IOException, InterruptedException {
+        List<Task> listOfHistory = Managers.getDefaultHistory().getHistory();
+        if (!listOfHistory.isEmpty()) {
+            for (Task task : listOfHistory) {
+                Managers.getDefaultHistory().remove(task.getId());
+            }
+        }
         Epic epic1 = new Epic("Epic #1", "Description of Epic #1");
         String jsonEpic = gson.toJson(epic1);
         HttpRequest request = HttpRequest.newBuilder(uri.resolve("/tasks/epic"))
@@ -250,7 +256,7 @@ class HttpTaskServerTest {
 
         HttpRequest request3 = HttpRequest.newBuilder(uri.resolve("/tasks/task/?id=1"))
                 .GET().build();
-        HttpResponse response6 = client.send(request3, HttpResponse.BodyHandlers.ofString());
+        client.send(request3, HttpResponse.BodyHandlers.ofString());
 
         HttpRequest request4 = HttpRequest.newBuilder(uri.resolve("/tasks/history"))
                 .GET().build();
@@ -258,7 +264,8 @@ class HttpTaskServerTest {
         var listOfTask = gson.fromJson(response4.body(), ArrayList.class);
         assertEquals(1, listOfTask.size());
     }
-/*    @Test
+
+    @Test
     void shouldReturnListOfPrioritizedTasksWhenCallEndpointTasksWithMethodGet() throws IOException, InterruptedException {
         SimpleTask simpleTask = new SimpleTask("Simple Task #1", "Description of Simple Task #1",
                 Status.NEW, "23.03.2023 22:22", 1200);
@@ -280,11 +287,12 @@ class HttpTaskServerTest {
         HttpRequest request2 = HttpRequest.newBuilder(uri.resolve("/tasks/task"))
                 .POST(HttpRequest.BodyPublishers.ofString(jsonSimpleTask2)).build();
         HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
-        Type type = new TypeToken<ArrayList<Task>>(){}.getType();
         HttpRequest request4 = HttpRequest.newBuilder(uri.resolve("/tasks"))
                 .GET().build();
         HttpResponse<String> response4 = client.send(request4, HttpResponse.BodyHandlers.ofString());
-        ArrayList<Task> list = gson.fromJson(response4.body(), type);
+        Type type = new TypeToken<ArrayList<Task>>() {
+        }.getType();
+        final List<Task> tasks = gson.fromJson(response4.body(), type);
 
         HttpRequest request5 = HttpRequest.newBuilder(uri.resolve("/tasks/task/?id=0"))
                 .GET().build();
@@ -295,7 +303,7 @@ class HttpTaskServerTest {
         HttpResponse<String> response6 = client.send(request6, HttpResponse.BodyHandlers.ofString());
         var task2 = gson.fromJson(response6.body(), SimpleTask.class);
 
-        assertEquals(task1, list.get(0));
-        assertEquals(task2, list.get(2));
-    }*/
+        assertEquals(task1, tasks.get(0));
+        assertEquals(task2, tasks.get(2));
+    }
 }
