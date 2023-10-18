@@ -189,7 +189,6 @@ public class InMemoryTaskManager implements TaskManager {
         if (!tasksById.containsKey(id)) return;
         Task task = tasksById.get(id);
         if (task instanceof Epic) {
-            //без дополнительного списка и цикла на удаление выбрасывает ConcurrentModificationException
             List<Integer> idOfSubtasks = new ArrayList<>();
             for (Integer subtaskID : ((Epic) task).getSubtasksID()) {
                 historyManager.remove(subtaskID);
