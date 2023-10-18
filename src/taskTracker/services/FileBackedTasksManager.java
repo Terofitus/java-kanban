@@ -29,6 +29,24 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         this.withSave = withSave;
     }
 
+    public static String historyToString(HistoryManager manager) {
+        return manager.getHistory().stream()
+                .map(Task::getId)
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+    }
+
+    private static List<Integer> historyFromString(String value) {
+        List<Integer> listOfID = new ArrayList<>();
+        if (value != null) {
+            String[] splitedStringOfHistory = value.split(",");
+            for (String s : splitedStringOfHistory) {
+                listOfID.add(Integer.parseInt(s));
+            }
+        }
+        return listOfID;
+    }
+
     @Override
     public ArrayList<Task> getListOfTasks(TypeOfTask type) {
         ArrayList<Task> list = super.getListOfTasks(type);
@@ -160,20 +178,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return info + "\n";
     }
 
-    public static String historyToString(HistoryManager manager) {
-        return manager.getHistory().stream()
-                .map(Task::getId)
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
-    }
-
     void load() throws ManagerLoadException {
         if (Files.exists(pathToFile.toAbsolutePath())) {
             try (BufferedReader br = new BufferedReader(
                     new FileReader(pathToFile.toAbsolutePath().toString(), StandardCharsets.UTF_8))) {
                 String taskFromString = br.readLine();
                 if (br.ready()) {
-                    while (!(taskFromString = br.readLine()).equals("")) {
+                    while (!(taskFromString = br.readLine()).isEmpty()) {
                         Task task = fromString(taskFromString);
                         createNewTaskToLoad(task);
                     }
@@ -228,10 +239,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     splitString[8] = splitString[8].replace("[", "")
                             .replace("]", "");
                     String[] subtasksID = splitString[8].split(";");
-                    if (subtasksID.length != 0) {
-                        for (String s : subtasksID) {
-                            epic.addSubtaskID(Integer.parseInt(s));
-                        }
+                    for (String s : subtasksID) {
+                        epic.addSubtaskID(Integer.parseInt(s));
                     }
                 }
                 task = epic;
@@ -245,16 +254,5 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         , Integer.parseInt(splitString[6]));
         }
         return task;
-    }
-
-    private static List<Integer> historyFromString(String value) {
-        List<Integer> listOfID = new ArrayList<>();
-        if (value != null) {
-            String[] splitedStringOfHistory = value.split(",");
-            for (String s : splitedStringOfHistory) {
-                listOfID.add(Integer.parseInt(s));
-            }
-        }
-        return listOfID;
     }
 }

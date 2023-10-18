@@ -8,8 +8,8 @@ import java.net.http.HttpResponse;
 
 public class KVClient {
     private final URI uri;
-    HttpClient client;
     private final String API_TOKEN;
+    HttpClient client;
 
     public KVClient(String anotherUri) throws IOException, InterruptedException {
         uri = URI.create(anotherUri);

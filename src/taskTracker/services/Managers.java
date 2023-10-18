@@ -4,9 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import models.Task;
+import server.ArrayListOfSortedTasksAdapter;
 import server.KVClient;
 import server.LocalDateTimeAdapter;
-import server.ArrayListOfSortedTasksAdapter;
 
 import java.io.IOException;
 import java.lang.reflect.Type;

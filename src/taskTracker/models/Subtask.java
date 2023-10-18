@@ -5,10 +5,6 @@ import java.time.format.DateTimeFormatter;
 public class Subtask extends Task {
     private final int epicID;
 
-    public int getEpicID() {
-        return epicID;
-    }
-
     public Subtask(String name, String description, Epic epic, Status status, String startOfTask, int duration) {
         super(name, description, startOfTask, duration);
         epicID = epic.getId();
@@ -19,6 +15,10 @@ public class Subtask extends Task {
         super(name, description, startOfTask, duration);
         this.epicID = epicID;
         setStatus(status);
+    }
+
+    public int getEpicID() {
+        return epicID;
     }
 
     @Override

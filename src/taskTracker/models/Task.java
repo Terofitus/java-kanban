@@ -5,13 +5,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public abstract class Task {
+    private static Integer nextID = 0;
     private final String name;
     private final String description;
     private Integer id;
     private Status status;
     private LocalDateTime startTime;
     private Integer durationOfTask;
-    private static Integer nextID = 0;
 
     protected Task(String name, String description) {
         this.name = name;
@@ -23,6 +23,14 @@ public abstract class Task {
         this.description = description;
         startTime = LocalDateTime.parse(startOfTask, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
         durationOfTask = duration;
+    }
+
+    public static void setNewId(Task task) {
+        task.id = nextID++;
+    }
+
+    public static void resetCounterOfId() {
+        nextID = 0;
     }
 
     public String getName() {
@@ -45,10 +53,6 @@ public abstract class Task {
         return id;
     }
 
-    public static void setNewId(Task task) {
-        task.id = nextID++;
-    }
-
     public void setOldId(int id) {
         this.id = id;
     }
@@ -57,20 +61,16 @@ public abstract class Task {
         return startTime;
     }
 
-    public LocalDateTime getEndTime() {
-        return startTime.plusMinutes(durationOfTask);
-    }
-
     protected void setStartTime(LocalDateTime time) {
         startTime = time;
     }
 
-    public Integer getDurationOfTask() {
-        return durationOfTask;
+    public LocalDateTime getEndTime() {
+        return startTime.plusMinutes(durationOfTask);
     }
 
-    public static void resetCounterOfId() {
-        nextID = 0;
+    public Integer getDurationOfTask() {
+        return durationOfTask;
     }
 
     @Override
